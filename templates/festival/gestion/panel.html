@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Panel{% endblock %}
+{% block contenido %}
+<h1 class="h3 mb-1">Panel de gestión</h1>
+<p class="text-body-secondary">Resumen del Festival y actividad reciente del equipo administrador.</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card card-fv p-3 h-100"><div class="small text-body-secondary">Edición vigente</div><div class="h5 mb-0">{% if vigente %}{{ vigente.anio }}{% else %}—{% endif %}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-fv p-3 h-100"><div class="small text-body-secondary">Categorías activas</div><div class="h5 mb-0">{{ total_categorias }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-fv p-3 h-100"><div class="small text-body-secondary">Votaciones abiertas ahora</div><div class="h5 mb-0">{{ votaciones_abiertas }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-fv p-3 h-100"><div class="small text-body-secondary">Votaciones en borrador</div><div class="h5 mb-0">{{ votaciones_borrador }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card card-fv p-3 h-100"><div class="small text-body-secondary">Votos registrados</div><div class="h5 mb-0">{{ total_votos }}</div></div></div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+  {% if perms.festival.view_edicion %}<a class="btn btn-primary" href="{% url 'festival:gestion_ediciones' %}">Gestionar ediciones</a>{% endif %}
+  <a class="btn btn-outline-primary" href="{% url 'admin:index' %}">Categorías, votaciones y opciones</a>
+  {% if puede_ver_votos %}<a class="btn btn-outline-primary" href="{% url 'admin:festival_voto_changelist' %}">Consultar votos</a>{% endif %}
+</div>
+
+<h2 class="h5">Actividad reciente</h2>
+{% if puede_auditar %}
+  {% if actividad %}
+  <div class="card card-fv"><div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <caption class="visually-hidden">Últimas acciones administrativas</caption>
+      <thead><tr><th scope="col">Fecha y hora</th><th scope="col">Usuario</th><th scope="col">Acción</th><th scope="col">Entidad</th><th scope="col">Elemento</th></tr></thead>
+      <tbody>
+      {% for a in actividad %}
+        <tr>
+          <td class="small text-nowrap">{{ a.action_time|date:"j/m/Y H:i" }}</td>
+          <td>{{ a.user.first_name|default:a.user.username }}</td>
+          <td>{% if a.is_addition %}Creó{% elif a.is_change %}Modificó{% else %}Eliminó{% endif %}</td>
+          <td>{{ a.content_type.name|capfirst }}</td>
+          <td>{{ a.object_repr|truncatechars:50 }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div></div>
+  {% else %}
+  <div class="alert alert-info">Aún no hay acciones registradas.</div>
+  {% endif %}
+{% else %}
+  <div class="alert alert-warning">No tiene permiso para consultar el registro de auditoría.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+{% if vigente %}
+<section class="hero-oscuro p-4 p-md-5 mb-4">
+  <span class="badge badge-edicion mb-2">Edición vigente</span>
+  <h1 class="display-6 fw-bold">{{ vigente.nombre }}</h1>
+  <p class="lead mb-3">{{ vigente.descripcion|default:"Consulta las categorías y votaciones disponibles." }}</p>
+  {% if vigente.fecha_inicio and vigente.fecha_fin %}
+    <p class="mb-3">Del {{ vigente.fecha_inicio|date:"j \d\e F" }} al {{ vigente.fecha_fin|date:"j \d\e F \d\e Y" }}.</p>
+  {% endif %}
+  <a class="btn btn-light" href="{% url 'festival:ediciones' %}">Ver todas las ediciones</a>
+  {% if not user.is_authenticated %}<a class="btn btn-outline-light ms-2" href="{% url 'cuentas:registro' %}">Crear cuenta</a>{% endif %}
+</section>
+
+<h2 class="h4 mb-3">Categorías de {{ vigente.nombre }}</h2>
+{% if categorias %}
+<div class="row g-3">
+  {% for c in categorias %}
+  <div class="col-12 col-md-6 col-lg-4">
+    <a class="card card-fv h-100 p-3" href="{{ c.get_absolute_url }}">
+      <h3 class="h5">{{ c.nombre }}</h3>
+      <p class="text-body-secondary mb-2">{{ c.descripcion|default:"Sin descripción."|truncatechars:110 }}</p>
+      <p class="small mb-0 mt-auto">
+        {{ c.total_votaciones }} votación{{ c.total_votaciones|pluralize:"es" }} ·
+        <span class="badge estado estado-abierta">{{ c.total_abiertas }} abierta{{ c.total_abiertas|pluralize:"s" }}</span>
+      </p>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">Esta edición aún no tiene categorías disponibles.</div>
+{% endif %}
+{% else %}
+<section class="hero-fv p-4 p-md-5">
+  <h1 class="h3">Festival de la Leyenda Vallenata</h1>
+  <p class="mb-0">Por ahora no hay una edición activa. Cuando se publique una, la verás aquí con sus categorías y votaciones.</p>
+</section>
+{% endif %}
+{% endblock %}

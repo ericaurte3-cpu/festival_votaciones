@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Mis votos{% endblock %}
+{% block contenido %}
+<h1 class="h3 mb-1">Mis votos</h1>
+<p class="text-body-secondary">Categorías en las que ya participaste. Se permite un voto por categoría y edición.</p>
+
+{% if votos %}
+<div class="card card-fv"><div class="table-responsive">
+  <table class="table align-middle mb-0">
+    <caption class="visually-hidden">Votos emitidos por el usuario</caption>
+    <thead>
+      <tr>
+        <th scope="col">Edición</th><th scope="col">Categoría</th><th scope="col">Votación</th>
+        <th scope="col">Tu opción</th><th scope="col">Fecha y hora</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for v in votos %}
+      <tr>
+        <td>{{ v.edicion.anio }}</td>
+        <td><a href="{{ v.categoria.get_absolute_url }}">{{ v.categoria.nombre }}</a></td>
+        <td>{{ v.votacion.nombre }}</td>
+        <td><strong>{{ v.opcion.nombre }}</strong></td>
+        <td class="small text-nowrap">{{ v.emitido_en|date:"j/m/Y H:i" }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+<p class="small text-body-secondary mt-2">Total: {{ votos|length }} voto{{ votos|length|pluralize }}.</p>
+{% else %}
+<div class="alert alert-info">Todavía no has votado. <a href="{% url 'festival:inicio' %}">Ver las categorías disponibles</a>.</div>
+{% endif %}
+{% endblock %}

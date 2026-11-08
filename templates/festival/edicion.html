@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block titulo %}{{ edicion.nombre }}{% endblock %}
+{% block contenido %}
+<nav aria-label="Ruta"><ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="{% url 'festival:inicio' %}">Inicio</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'festival:ediciones' %}">Ediciones</a></li>
+  <li class="breadcrumb-item active" aria-current="page">{{ edicion.anio }}</li>
+</ol></nav>
+{% include "festival/_vista_previa.html" %}
+<h1 class="h3">{{ edicion.nombre }}</h1>
+<p class="text-body-secondary">
+  {{ edicion.descripcion }}
+  {% if edicion.fecha_inicio and edicion.fecha_fin %}Del {{ edicion.fecha_inicio|date:"j \d\e F" }} al {{ edicion.fecha_fin|date:"j \d\e F \d\e Y" }}.{% endif %}
+</p>
+<h2 class="h4 mb-3">Categorías</h2>
+{% if categorias %}
+<div class="row g-3">
+  {% for c in categorias %}
+  <div class="col-12 col-md-6 col-lg-4">
+    <a class="card card-fv h-100 p-3" href="{{ c.get_absolute_url }}">
+      <h3 class="h5">{{ c.nombre }}</h3>
+      <p class="text-body-secondary">{{ c.descripcion|default:"Sin descripción." }}</p>
+      <p class="small mb-0 mt-auto">{{ c.total_votaciones }} votación{{ c.total_votaciones|pluralize:"es" }} · {{ c.total_abiertas }} abierta{{ c.total_abiertas|pluralize:"s" }}</p>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">Esta edición todavía no tiene categorías.</div>
+{% endif %}
+{% endblock %}

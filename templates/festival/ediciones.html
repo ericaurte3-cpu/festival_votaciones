@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Ediciones{% endblock %}
+{% block contenido %}
+<h1 class="h3 mb-3">Ediciones del Festival</h1>
+{% if ediciones %}
+<div class="row g-3">
+  {% for e in ediciones %}
+  <div class="col-12 col-md-6">
+    <a class="card card-fv h-100 p-3" href="{{ e.get_absolute_url }}">
+      <h2 class="h5">{{ e.nombre }} <span class="text-body-secondary">{{ e.anio }}</span></h2>
+      <p class="text-body-secondary">{{ e.descripcion|default:"Sin descripción." }}</p>
+      <p class="small mb-0 mt-auto">{{ e.total_categorias }} categoría{{ e.total_categorias|pluralize:"s" }}</p>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">Aún no hay ediciones publicadas.</div>
+{% endif %}
+{% endblock %}

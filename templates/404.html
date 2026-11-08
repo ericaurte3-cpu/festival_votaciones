@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block titulo %}Página no encontrada{% endblock %}
+{% block contenido %}
+<h1>Página no encontrada</h1>
+<p class="lead">El contenido que buscas no existe o todavía no está publicado.</p>
+<p><a class="boton" href="{% url 'festival:inicio' %}">Volver al inicio</a></p>
+{% endblock %}

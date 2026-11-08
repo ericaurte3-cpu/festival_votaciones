@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}{{ categoria.nombre }}{% endblock %}
+{% block contenido %}
+<nav aria-label="Ruta"><ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="{% url 'festival:inicio' %}">Inicio</a></li>
+  <li class="breadcrumb-item"><a href="{{ categoria.edicion.get_absolute_url }}">{{ categoria.edicion.anio }}</a></li>
+  <li class="breadcrumb-item active" aria-current="page">{{ categoria.nombre }}</li>
+</ol></nav>
+{% include "festival/_vista_previa.html" %}
+<h1 class="h3">{{ categoria.nombre }}</h1>
+<p class="text-body-secondary">{{ categoria.descripcion }}</p>
+{% if voto_usuario %}
+<div class="alert alert-success" role="status">
+  Ya votaste en esta categoría: <strong>{{ voto_usuario.opcion.nombre }}</strong>
+  (en «{{ voto_usuario.votacion.nombre }}»). Solo se permite un voto por categoría; puedes votar en las demás.
+</div>
+{% endif %}
+<h2 class="h4 mb-3">Votaciones</h2>
+{% if votaciones %}
+<div class="row g-3">
+  {% for v in votaciones %}
+  <div class="col-12 col-md-6">
+    <a class="card card-fv h-100 p-3" href="{{ v.get_absolute_url }}">
+      <span class="badge estado estado-{{ v.estado_publico }} align-self-start mb-2">{{ v.estado_publico_display }}</span>
+      <h3 class="h5">{{ v.nombre }}</h3>
+      <p class="small mb-0 mt-auto text-body-secondary">
+        {{ v.total_opciones }} opcion{{ v.total_opciones|pluralize:"es" }} ·
+        {{ v.fecha_apertura|date:"j/m/Y H:i" }} – {{ v.fecha_cierre|date:"j/m/Y H:i" }}
+      </p>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">Esta categoría aún no tiene votaciones publicadas.</div>
+{% endif %}
+{% endblock %}

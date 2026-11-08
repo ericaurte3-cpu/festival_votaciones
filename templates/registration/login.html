@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titulo %}Iniciar sesión{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center"><div class="col-12 col-md-8 col-lg-5">
+<div class="card card-fv p-4">
+  <h1 class="h4 mb-3">Iniciar sesión</h1>
+  <form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      {{ form.username }}
+      <div class="invalid-feedback">Ingresa tu correo electrónico.</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.password.id_for_label }}">Contraseña</label>
+      <div class="input-group">
+        {{ form.password }}
+        <button class="btn btn-outline-secondary" type="button" data-toggle-password="{{ form.password.id_for_label }}" aria-pressed="false">Mostrar</button>
+      </div>
+      <div class="invalid-feedback">Ingresa tu contraseña.</div>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+  </form>
+  <p class="mt-3 mb-0 small">¿No tienes cuenta? <a href="{% url 'cuentas:registro' %}">Regístrate</a></p>
+</div></div></div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}{% if object %}Editar edición{% else %}Nueva edición{% endif %}{% endblock %}
+{% block contenido %}
+<nav aria-label="Ruta"><ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="{% url 'festival:gestion_ediciones' %}">Gestión de ediciones</a></li>
+  <li class="breadcrumb-item active" aria-current="page">{% if object %}{{ object.anio }}{% else %}Nueva{% endif %}</li>
+</ol></nav>
+<div class="row"><div class="col-12 col-lg-7">
+<div class="card card-fv p-4">
+  <h1 class="h4 mb-3">{% if object %}Editar edición {{ object.anio }}{% else %}Nueva edición{% endif %}</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    {% for campo in form %}
+      {% if campo.field.widget.input_type == "checkbox" %}
+      <div class="form-check mb-3">{{ campo }}<label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {% if campo.help_text %}<div class="form-text">{{ campo.help_text }}</div>{% endif %}</div>
+      {% else %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}
+        {% for e in campo.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+      </div>
+      {% endif %}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a class="btn btn-link" href="{% url 'festival:gestion_ediciones' %}">Cancelar</a>
+  </form>
+</div></div></div>
+{% endblock %}

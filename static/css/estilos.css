@@ -1,0 +1,89 @@
+/* Tema del sistema sobre Bootstrap 5.3 (capa de presentación, RNF-04, RNF-05, RNF-12).
+   Se ajustan las variables de Bootstrap a la paleta del prototipo de la Entrega 1 y se
+   añaden los componentes propios (estados de votación, lista de opciones). */
+:root {
+  --bs-primary: #B3261E;
+  --bs-primary-rgb: 179, 38, 30;
+  --bs-link-color: #B3261E;
+  --bs-link-color-rgb: 179, 38, 30;
+  --bs-link-hover-color: #8A1C16;
+  --bs-link-hover-color-rgb: 138, 28, 22;
+  --bs-body-font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fv-ink: #161A26;
+  --fv-gold: #E3A72F;
+  --fv-gold-ink: #3A2A00;
+  --fv-bg: #EEF0F4;
+}
+[data-bs-theme="dark"] {
+  --bs-primary: #F0645A;
+  --bs-primary-rgb: 240, 100, 90;
+  --bs-link-color: #F0645A;
+  --bs-link-color-rgb: 240, 100, 90;
+  --bs-link-hover-color: #F58D85;
+  --bs-link-hover-color-rgb: 245, 141, 133;
+  --fv-bg: #0E1017;
+  --bs-body-bg: #0E1017;
+  --bs-tertiary-bg: #1A1E2B;
+}
+body { background: var(--fv-bg); min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+
+.btn-primary {
+  --bs-btn-bg: #B3261E; --bs-btn-border-color: #B3261E; --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #8A1C16; --bs-btn-hover-border-color: #8A1C16; --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #7A1812; --bs-btn-active-border-color: #7A1812; --bs-btn-active-color: #fff;
+  --bs-btn-disabled-bg: #B3261E; --bs-btn-disabled-border-color: #B3261E;
+  --bs-btn-focus-shadow-rgb: 179, 38, 30;
+}
+[data-bs-theme="dark"] .btn-primary {
+  --bs-btn-bg: #F0645A; --bs-btn-border-color: #F0645A; --bs-btn-color: #1A0503;
+  --bs-btn-hover-bg: #F58D85; --bs-btn-hover-border-color: #F58D85; --bs-btn-hover-color: #1A0503;
+  --bs-btn-active-bg: #F58D85; --bs-btn-active-color: #1A0503; --bs-btn-disabled-bg: #F0645A; --bs-btn-disabled-border-color: #F0645A;
+}
+.btn-outline-primary { --bs-btn-color: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-disabled-color: var(--bs-primary); --bs-btn-disabled-border-color: var(--bs-primary); }
+:focus-visible { outline: 3px solid var(--fv-gold); outline-offset: 2px; }
+
+/* Cabecera */
+.fv-navbar { background: var(--fv-ink); border-bottom: 4px solid var(--fv-gold); }
+.fv-navbar .navbar-brand { font-weight: 800; line-height: 1.15; }
+.fv-navbar .navbar-brand small { display: block; font-weight: 500; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
+.fv-navbar .nav-link, .fv-navbar .btn-link { color: rgba(255,255,255,.88); font-weight: 600; text-decoration: none; }
+.fv-navbar .nav-link:hover, .fv-navbar .btn-link:hover { color: #fff; text-decoration: underline; }
+.saltar { position: absolute; left: -999px; background: var(--fv-ink); color: #fff; padding: 8px 12px; z-index: 2000; }
+.saltar:focus { left: 8px; top: 8px; }
+
+/* Portada */
+.hero-fv { background: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-left: 6px solid var(--bs-primary); border-radius: .75rem; }
+.hero-oscuro { background: var(--fv-ink); color: #fff; border-radius: 1rem; }
+.hero-oscuro .badge-edicion { background: var(--fv-gold); color: #161A26; }
+
+/* Tarjetas */
+.card-fv { background: var(--bs-body-bg); border-color: var(--bs-border-color); border-radius: .75rem; }
+a.card-fv { color: inherit; text-decoration: none; }
+a.card-fv:hover { border-color: var(--bs-primary); box-shadow: 0 .25rem .75rem rgba(0,0,0,.08); }
+a.card-fv h2, a.card-fv h3 { color: var(--bs-body-color); }
+
+/* Estados de votación: llevan texto además de color (accesibilidad) */
+.estado { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
+.estado-abierta { background: #DFF3E8 !important; color: #1F7A4D !important; }
+.estado-proximamente { background: #E3EEFB !important; color: #1F4E8C !important; }
+.estado-cerrada { background: #FFF1D6 !important; color: #9A5B00 !important; }
+.estado-publicada { background: #EDE3FB !important; color: #55318C !important; }
+.estado-borrador { background: #E9ECEF !important; color: #495057 !important; }
+[data-bs-theme="dark"] .estado-abierta { background: #123325 !important; color: #5FD39A !important; }
+[data-bs-theme="dark"] .estado-proximamente { background: #14233A !important; color: #8DB8F0 !important; }
+[data-bs-theme="dark"] .estado-cerrada { background: #3A2B10 !important; color: #F0B35A !important; }
+[data-bs-theme="dark"] .estado-publicada { background: #2A1B45 !important; color: #C6A8F0 !important; }
+[data-bs-theme="dark"] .estado-borrador { background: #2B3035 !important; color: #ADB5BD !important; }
+
+/* Opciones de una votación */
+.opciones .list-group-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; }
+.opciones .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--fv-gold); color: var(--fv-gold-ink); font-weight: 800; display: grid; place-items: center; }
+
+/* Aviso de decisión pendiente con la Fundación (Entrega 1: «Pendiente de validación») */
+.pendiente { border-left: 4px solid #E3A72F; background: var(--bs-warning-bg-subtle); color: var(--bs-warning-text-emphasis); border-radius: .5rem; padding: .6rem .9rem; font-size: .9rem; }
+
+footer.pie { border-top: 1px solid var(--bs-border-color); color: var(--bs-secondary-color); font-size: .85rem; }
+
+/* Contraste suficiente (WCAG AA) en modo oscuro para los botones secundarios */
+[data-bs-theme="dark"] .btn-outline-secondary { --bs-btn-color: #C4CAD0; --bs-btn-border-color: #8A929A; --bs-btn-hover-bg: #3A404A; --bs-btn-hover-color: #fff; --bs-btn-hover-border-color: #8A929A; }

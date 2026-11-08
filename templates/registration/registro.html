@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Crear cuenta{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center"><div class="col-12 col-md-8 col-lg-6">
+<div class="card card-fv p-4">
+  <h1 class="h4 mb-3">Crear cuenta</h1>
+  {% if correo_duplicado %}
+    <div class="alert alert-warning" role="alert">Este correo ya está registrado. <a href="{% url 'cuentas:login' %}">Inicia sesión</a>.</div>
+  {% endif %}
+  <form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    {% for campo in form %}
+      {% if campo.field.widget.input_type == "checkbox" %}
+      <div class="form-check mb-3">
+        {{ campo }}
+        <label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {% for e in campo.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        <p class="pendiente mt-2 mb-0">Texto de tratamiento de datos pendiente de validación con la Fundación.</p>
+      </div>
+      {% else %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+        {% if campo.name == "password1" or campo.name == "password2" %}
+        <div class="input-group">
+          {{ campo }}
+          <button class="btn btn-outline-secondary" type="button" data-toggle-password="{{ campo.id_for_label }}" aria-pressed="false">Mostrar</button>
+        </div>
+        {% else %}{{ campo }}{% endif %}
+        {% for e in campo.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        {% if campo.help_text and campo.name == "password1" %}<div class="form-text">{{ campo.help_text|safe }}</div>{% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary w-100">Registrarme</button>
+  </form>
+  <p class="mt-3 mb-0 small">¿Ya tienes cuenta? <a href="{% url 'cuentas:login' %}">Inicia sesión</a></p>
+</div></div></div>
+{% endblock %}

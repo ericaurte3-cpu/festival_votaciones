@@ -1,0 +1,23 @@
+# Secretos y configuración local: NUNCA subir
+.env
+.env.*
+!.env.example
+
+# Entornos virtuales y caché de Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Archivos generados
+staticfiles/
+*.sqlite3
+*.log
+.coverage
+htmlcov/
+
+# Editores y sistema operativo
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

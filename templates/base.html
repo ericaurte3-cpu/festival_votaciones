@@ -1,0 +1,71 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Votaciones{% endblock %} · Festival de la Leyenda Vallenata 2027</title>
+  <script>
+    /* Tema claro/oscuro según el sistema (antes de pintar, para evitar parpadeos). */
+    (function () {
+      var mq = window.matchMedia("(prefers-color-scheme: dark)");
+      function aplicar() { document.documentElement.setAttribute("data-bs-theme", mq.matches ? "dark" : "light"); }
+      aplicar();
+      mq.addEventListener("change", aplicar);
+    })();
+  </script>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <nav class="navbar navbar-expand-md navbar-dark fv-navbar" aria-label="Principal">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'festival:inicio' %}">
+        Votaciones del Festival<small>Leyenda Vallenata 2027</small>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+              aria-controls="menu" aria-expanded="false" aria-label="Abrir el menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav ms-auto align-items-md-center gap-md-2">
+          <li class="nav-item"><a class="nav-link" href="{% url 'festival:inicio' %}">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'festival:ediciones' %}">Ediciones</a></li>
+          {% if user.is_authenticated %}
+            {% if user.is_staff %}<li class="nav-item"><a class="nav-link" href="{% url 'festival:gestion_panel' %}">Panel</a></li>{% if perms.festival.view_edicion %}<li class="nav-item"><a class="nav-link" href="{% url 'festival:gestion_ediciones' %}">Gestionar ediciones</a></li>{% endif %}<li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Administración</a></li>{% endif %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'festival:mis_votos' %}">Mis votos</a></li>
+            <li class="nav-item"><span class="nav-link disabled text-white-50">Sesión: {{ user.first_name|default:user.username }}</span></li>
+            <li class="nav-item">
+              <form method="post" action="{% url 'cuentas:logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link nav-link">Cerrar sesión</button>
+              </form>
+            </li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'cuentas:login' %}">Iniciar sesión</a></li>
+            <li class="nav-item"><a class="btn btn-sm btn-primary" href="{% url 'cuentas:registro' %}">Registrarse</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="contenido" class="container py-4 py-md-5">
+    {% for m in messages %}
+      <div class="alert alert-{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show" role="status" {% if m.tags == 'success' %}data-autocerrar{% endif %}>
+        {{ m }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    {% endfor %}
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie py-3 text-center">
+    Desarrollo Web · Fundación Universitaria del Área Andina · Entrega 3 (módulo de votaciones con datos de prueba)
+  </footer>
+
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

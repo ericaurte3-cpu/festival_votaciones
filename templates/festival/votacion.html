@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block titulo %}{{ votacion.nombre }}{% endblock %}
+{% block contenido %}
+{% with ep=votacion.estado_publico %}
+<nav aria-label="Ruta"><ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="{% url 'festival:inicio' %}">Inicio</a></li>
+  <li class="breadcrumb-item"><a href="{{ votacion.categoria.edicion.get_absolute_url }}">{{ votacion.categoria.edicion.anio }}</a></li>
+  <li class="breadcrumb-item"><a href="{{ votacion.categoria.get_absolute_url }}">{{ votacion.categoria.nombre }}</a></li>
+  <li class="breadcrumb-item active" aria-current="page">{{ votacion.nombre }}</li>
+</ol></nav>
+{% include "festival/_vista_previa.html" %}
+
+<div class="row g-4">
+  <div class="col-12 col-lg-8">
+    <h1 class="h3">{{ votacion.nombre }}</h1>
+    <p class="text-body-secondary">{{ votacion.descripcion }}</p>
+
+    <h2 class="h5 mt-4">Opciones participantes</h2>
+    {% if votacion.opciones_activas %}
+    {% if puede_votar and user.is_authenticated %}
+    <form method="post" action="{% url 'festival:votar' votacion.pk %}" id="form-voto">
+      {% csrf_token %}
+      <fieldset>
+        <legend class="visually-hidden">Selecciona una opción</legend>
+        <ol class="list-group list-group-flush opciones card card-fv list-unstyled">
+          {% for o in votacion.opciones_activas %}
+          <li class="list-group-item">
+            <span class="num" aria-hidden="true">{{ forloop.counter }}</span>
+            <div class="form-check flex-grow-1">
+              <input class="form-check-input" type="radio" name="opcion" id="opcion-{{ o.pk }}" value="{{ o.pk }}" required>
+              <label class="form-check-label w-100" for="opcion-{{ o.pk }}">
+                <strong>{{ o.nombre }}</strong>{% if o.descripcion %}<span class="d-block small text-body-secondary">{{ o.descripcion }}</span>{% endif %}
+              </label>
+            </div>
+          </li>
+          {% endfor %}
+        </ol>
+      </fieldset>
+      <button type="submit" class="btn btn-primary mt-3">Continuar y confirmar voto</button>
+    </form>
+    {% else %}
+    <ol class="list-group list-group-flush opciones card card-fv list-unstyled">
+      {% for o in votacion.opciones_activas %}
+      <li class="list-group-item{% if voto_usuario and voto_usuario.opcion_id == o.pk %} list-group-item-success{% endif %}">
+        <span class="num" aria-hidden="true">{{ forloop.counter }}</span>
+        <div><strong>{{ o.nombre }}</strong>{% if voto_usuario and voto_usuario.opcion_id == o.pk %} <span class="badge text-bg-success">Tu voto</span>{% endif %}{% if o.descripcion %}<div class="small text-body-secondary">{{ o.descripcion }}</div>{% endif %}</div>
+      </li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+    {% else %}
+    <div class="alert alert-info">Esta votación todavía no tiene opciones registradas.</div>
+    {% endif %}
+  </div>
+
+  <aside class="col-12 col-lg-4">
+    <div class="card card-fv p-3">
+      <h2 class="h6 text-uppercase text-body-secondary">Estado</h2>
+      <p><span class="badge estado estado-{{ ep }}">{{ votacion.estado_publico_display }}</span></p>
+      <h2 class="h6 text-uppercase text-body-secondary">Periodo</h2>
+      <p class="mb-2 small">
+        Abre: <strong>{{ votacion.fecha_apertura|date:"j/m/Y H:i" }}</strong><br>
+        Cierra: <strong>{{ votacion.fecha_cierre|date:"j/m/Y H:i" }}</strong>
+      </p>
+      {% if ep == "proximamente" %}
+        <p class="fw-semibold" data-countdown="{{ votacion.fecha_apertura.isoformat }}" data-prefix="Abre en " data-final="Ya abrió: recarga la página"></p>
+      {% elif ep == "abierta" %}
+        <p class="fw-semibold" data-countdown="{{ votacion.fecha_cierre.isoformat }}" data-prefix="Cierra en " data-final="Votación cerrada"></p>
+      {% endif %}
+      <h2 class="h6 text-uppercase text-body-secondary">Opciones</h2>
+      <p>{{ votacion.opciones_activas|length }}</p>
+
+      <h2 class="h6 text-uppercase text-body-secondary">Tu participación</h2>
+      <p id="nota-voto" class="small mb-0" role="status">
+        {% if voto_usuario %}
+          <span class="badge text-bg-success">Ya votaste en esta categoría</span><br>
+          Tu opción: <strong>{{ voto_usuario.opcion.nombre }}</strong>
+          {% if voto_usuario.votacion_id != votacion.pk %}<br><span class="text-body-secondary">(en «{{ voto_usuario.votacion.nombre }}»)</span>{% endif %}
+          <br><a href="{% url 'festival:mis_votos' %}">Ver mis votos</a>
+        {% elif puede_votar %}
+          {% if user.is_authenticated %}Elige una opción y confirma tu voto. Solo puedes votar una vez por categoría.
+          {% else %}Para votar, <a href="{% url 'cuentas:login' %}?next={{ request.path }}">inicia sesión</a> o <a href="{% url 'cuentas:registro' %}">regístrate</a>.{% endif %}
+        {% elif ep == "proximamente" %}La votación aún no está abierta.
+        {% else %}Esta votación no recibe votos.{% endif %}
+      </p>
+    </div>
+    <p class="pendiente mt-3 mb-0">Pendiente de validación con la Fundación: verificación de identidad del votante y publicación de resultados.</p>
+  </aside>
+</div>
+{% endwith %}
+{% endblock %}
